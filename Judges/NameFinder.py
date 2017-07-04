@@ -90,8 +90,3 @@ def NameFinder(namedict,string,subset=None,namekeys=("First Name","Middle Name",
     d2 = {tuple(v): k for k, v in allmatches.items()}
     allmatches = {v: list(set(list(k))) for k, v in d2.items()}
     return(allmatches)
-        
-#fjc['1392461']    
-#fjc['1391061']    
-#test3 = "NELSON, SILVERMAN AND IKUTA, CIRCUIT JUDGES. JUDGE NELSON DISSENTS."
-#yikes = NameFinder(namedict = fjc, string = test3, subset = candjud)

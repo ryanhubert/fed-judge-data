@@ -21,7 +21,6 @@ with open("data/courts.csv","r") as csvfile:
     abbr = {"":""}
     for row in reader:
         abbr[row['full_name']] = row['abbr']
-#fjc['1392461']
             
 def MakeDate(string):
     """ 
@@ -107,6 +106,3 @@ def FindID(data,lastname):
             allcourts = list(filter(None,[(abbr[data[k]['Court Name ('+str(n)+')']],data[k]['Commission Date ('+str(n)+')'],data[k]['Termination Date ('+str(n)+')']) if data[k]['Court Name ('+str(n)+')'] != "" else "" for n in range(1,7)]))
             print(allcourts)
             #return(k)
-
-#FindID(fjc,"Reavley")
-#fjc['1388896']
