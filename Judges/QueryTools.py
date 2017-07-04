@@ -11,12 +11,15 @@ judges.
 """
 
 # Import Modules
+import os
 import re
 import csv
 import datetime 
 
+current_path = os.path.dirname(os.path.abspath( __file__ ))
+
 # Courts abbreviations
-with open("data/courts.csv","r") as csvfile:
+with open(current_path + "/data/courts.csv","r") as csvfile:
     reader = csv.DictReader(csvfile.read().splitlines())
     abbr = {"":""}
     for row in reader:

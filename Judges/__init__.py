@@ -5,8 +5,9 @@
 # University of California, Davis
 
 import os
-os.chdir('/Users/ryanhubert/Box/GitHub/fed-judge-data/Judges')
+current_path = os.path.dirname(os.path.abspath( __file__ ))
+os.chdir(current_path) 
 
-from LoadData import *
-from QueryTools import *
-from NameFinder import *
+from Judges import LoadData
+from Judges import QueryTools
+from Judges import NameFinder
