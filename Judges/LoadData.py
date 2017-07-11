@@ -42,4 +42,3 @@ def LoadData(directory):
         return(fjcdict)
     else:
         raise Exception("No data loaded!")
-        return(None)
