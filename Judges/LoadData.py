@@ -6,8 +6,8 @@
 # University of California, Davis
 
 """
-This Python 3 script takes the Federal Judicial Center's Biographical 
-Directory of Article III Federal Judges and generates a json file formatted 
+This Python 3 script takes the Federal Judicial Center's Biographical
+Directory of Article III Federal Judges and generates a json file formatted
 for easy import/use in other federal courts-related research applications.
 """
 
@@ -17,22 +17,26 @@ from urllib.request import urlopen
 
 def UpdateData(directory):
     # Download most recent judicial biography
+    if not re.search('/ *$',directory):
+        directory = directory.strip() + '/'
     with urlopen("https://www.fjc.gov/sites/default/files/history/judge-export.csv") as webpage:
         reader2 = csv.DictReader(webpage.read().decode('utf-8').splitlines())
         fjcdict = {}
         for row in reader2:
             fjcdict[row['nid']] = row
-    
+
     # Save as JSON
     if os.path.exists(directory + "judges.json"):
         modtime = re.sub('[^\d]','',str(datetime.datetime.fromtimestamp(os.stat(directory+"judges.json").st_mtime))[:-2])
         os.rename(directory + "judges.json",directory + "judges" + modtime + ".json")
     with open(directory + 'judges.json', 'w') as fp:
         json.dump(fjcdict, fp, sort_keys=True, indent=4)
-        
+
     return(fjcdict)
 
 def LoadData(directory):
+    if not re.search('/ *$',directory):
+        directory = directory.strip() + '/'
     if os.path.exists(directory + "judges.json"):
         with open(directory + 'judges.json', 'r') as fp:
             fjcdict = json.load(fp)

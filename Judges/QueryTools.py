@@ -14,7 +14,7 @@ judges.
 import os
 import re
 import csv
-import datetime 
+import datetime
 
 current_path = os.path.dirname(os.path.abspath( __file__ ))
 
@@ -24,9 +24,9 @@ with open(current_path + "/data/courts.csv","r") as csvfile:
     abbr = {"":""}
     for row in reader:
         abbr[row['full_name']] = row['abbr']
-            
+
 def MakeDate(string):
-    """ 
+    """
     Converts ##/##/#### string into a datetime.date object
     """
     if string == "":
@@ -36,20 +36,21 @@ def MakeDate(string):
     else:
         return('')
 
-def SittingJudges(data,court_abbr,begdate,enddate=None):
+def SittingJudges(data,begdate,enddate=None,court_abbr=None):
     """
-    Takes a court name and date (or range of dates) and returns IDs for 
+    Takes a court name and date (or range of dates) and returns IDs for
     all judges sitting in that court for that date (or range of dates)
     [including ones sitting only partially in date range, if relevant].
     """
+    court_abbr = court_abbr.upper() if court_abbr != None else None
     if enddate == None:
         enddate = begdate
     alljudges = {'active': [], 'senior': []}
     for k in data:
         for n in range(1,7):
-            if court_abbr == "":
-                continue
-            if abbr[data[k]['Court Name ('+str(n)+')']] != court_abbr:
+            # if court_abbr in ['',None]:
+            #     continue
+            if court_abbr != None and abbr[data[k]['Court Name ('+str(n)+')']] != court_abbr:
                 continue
             #ndate = MakeDate(data[k]['Nomination Date ('+str(n)+')']) # nomination
             #hdate = MakeDate(data[k]['Hearing Date ('+str(n)+')']) # hearing
@@ -58,7 +59,7 @@ def SittingJudges(data,court_abbr,begdate,enddate=None):
             sdate = MakeDate(data[k]['Senior Status Date ('+str(n)+')']) # senior status
             tdate = MakeDate(data[k]['Termination Date ('+str(n)+')']) # termination
 
-            if min(cdate,rdate) > enddate: 
+            if min(cdate,rdate) > enddate:
                 continue
             elif tdate < begdate:
                 continue
