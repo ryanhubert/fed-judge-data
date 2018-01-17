@@ -27,10 +27,10 @@ def NameFinder(namedict,string,subset=None,namekeys=("First Name","Middle Name",
         if not re.search(bl+ln+bl,string) or ln == "":
             continue
         fn = namedict[k][namekeys[0]].upper().strip()
-        fi = namedict[k][namekeys[0]].upper()[0].strip()
+        fi = fn[0] if fn != '' else ''
         mn = namedict[k][namekeys[1]].upper().strip()
-        mi = namedict[k][namekeys[1]].upper()[0].strip()
-        
+        mi = mn[0] if mn != '' else ''
+
         # First name first
         name_string = re.findall("([^,;:]{,19}"+bl+ln+")"+bl,string)
         c = 0
