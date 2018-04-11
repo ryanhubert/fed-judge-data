@@ -15,7 +15,7 @@ for easy import/use in other federal courts-related research applications.
 import os, csv, json, re, datetime
 from urllib.request import urlopen
 
-def UpdateData(directory):
+def UpdateData(directory=os.getcwd()):
     # Download most recent judicial biography
     if not re.search('/ *$',directory):
         directory = directory.strip() + '/'
@@ -34,7 +34,8 @@ def UpdateData(directory):
 
     return(fjcdict)
 
-def LoadData(directory):
+def LoadData(directory=os.getcwd()):
+    print(directory)
     if not re.search('/ *$',directory):
         directory = directory.strip() + '/'
     if os.path.exists(directory + "judges.json"):
