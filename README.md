@@ -12,7 +12,9 @@ To use, download and place `Judges` directory in either (1) the working director
 
 `QueryTools.py` provides a set of tools that are useful for querying `fjc_dict` and generating lists of judges meeting specific criteria.
 
-`NameFinder.py` contains a function `NameFinder` that takes a dictionary of first/middle/last names and an unstructured text string and finds names from the dictionary in the unstructured text. This function works in lieu of a part of speech (POS) tagger or named entity recognizer (NER), such as the Stanford NER (which is implemented in `nltk`). Indeed, unlike a POS tagger or NER, the `NameFinder` function leverages a predefined database of names and flexibly searches over unstructured text to find utterances of these names.
+`NameFinder.py` contains a function `NameFinder` that takes a dictionary of first/middle/last names and an unstructured text string and finds names from the dictionary in the unstructured text. This function works in lieu of a part of speech (POS) tagger or named entity recognizer (NER), such as the Stanford NER (which is implemented in `nltk`). Indeed, unlike a POS tagger or NER, the `NameFinder` function leverages a predefined database of names and flexibly searches over unstructured text to find utterances of these names. **Update 04/11/2018**: NameFinder v2 is now out. It has been completely re-written to dramatically improve performance. Speed tests demonstrate it is nearly twice as fast as v1. Additional options added to improve accuracy. See detailed notes in the script. 
+
+
 
 ## For future versions
 
