@@ -103,6 +103,7 @@ def NameFinder(namedict, string, subset=None, matches = 'all',
             
             # Applies series of rules, giving code "em" based on how good of
             # a match it is. Lower "em" is better.
+
             if ' '.join([""] + fn + mn + ln + [""]) in n:
                 em, matched_text = 0, ' '.join([""] + fn + mn + ln + [""])
             elif ' '.join([""] + fn + mi + ln + [""]) in n:
@@ -111,17 +112,12 @@ def NameFinder(namedict, string, subset=None, matches = 'all',
                 em, matched_text = 1, ' '.join([""] + fi + mn + ln + [""])
             elif fn != [] and ' '.join([""] + fn + ln + [""]) in n:
                 em, matched_text = 2, ' '.join([""] + fn + ln + [""])
-
             elif ' '.join([""] + fi + mi + ln + [""]) in n:
                 em, matched_text = 3, ' '.join([""] + fi + mi + ln + [""])
-            elif fn != [] and re.search(' '.join(fn + ['[A-Z]'] + ln),n):
-                em, matched_text = 4, re.search(' '.join(fn + ['[A-Z]'] + ln),n).group(0)
-
             elif fn != [] and  ' '.join([""] + fi + ln + [""]) in n:
                 em, matched_text = 5, ' '.join([""] + fi + ln + [""])
             elif mn != [] and ' '.join([""] + mi + ln + [""]) in n:
                 em, matched_text = 6, ' '.join([""] + mi + ln + [""])
-            
             elif " JUDGE " in n and n[n.find(" JUDGE ")+6:].strip() == ' '.join(ln):
                 em, matched_text = 7, " JUDGE " + ' '.join(ln)
             elif len(tokens) == 1 and n.strip() == ' '.join(ln):
@@ -138,37 +134,54 @@ def NameFinder(namedict, string, subset=None, matches = 'all',
                 else:
                     em, matched_text = 99, ""
             
+            if (em > 2 and em < 7) or em > 10: 
+                # Performs some regex searches to catch special cases: 
+                # (1) namedict's info is less robust than the string,
+                # eg, finding "Barbara L. Major" in "Barbara Lynn Major"
+                # (2) string uses wrong middle initial (assume it's a typo)
+                # eg, finding "Barbara L. Major" in "Barbara Q. Major"
+                #
+                # These searches are sequenced here in order to avoid them
+                # where possible. The `re` module is much less efficient
+                # than string operations.
+                # They are only necessary if low quality matches found above.
+                
+                if mi != [] and re.search(' '.join([""] + fn + [mi[0] + '[A-Z]+'] + ln + [""]),n):
+                    em, matched_text = 2, re.search("("+' '.join([""] + fn + [mi[0] + '[A-Z]+'] + ln + [""])+")",n).group(0)
+                if fn != [] and re.search(' '.join(fn + ['[A-Z]'] + ln),n):
+                    em, matched_text = 4, re.search(' '.join(fn + ['[A-Z]'] + ln),n).group(0)
+
             if em < 11:
                 allmatches[a].append((em,k,"FJC Name: " + dict_name,matched_text.strip()))
         
-    if matches != 'all':
-        if matches == 'exact':
-            allmatches = {x : [y for y in allmatches[x] if y[0] <= 2] for x in allmatches if allmatches[x] != []}
-        elif matches == 'best':
-            allmatches = {x : [y for y in allmatches[x] if y[0] == min([z[0] for z in allmatches[x]])] for x in allmatches if allmatches[x] != []}
-    
-            # Consistency checks: make sure that text in string aren't being 
-            # "tagged" with more than one person's name from namedict
-            toremove = set()
-            for a in allmatches:
-                for a1 in allmatches:
-                    if len(a) < len(a1) and a in a1:
-                        if allmatches[a] == allmatches[a1]:
-                            toremove.add(a1)
-            for r in toremove: del allmatches[r]
-    
-            tosave = list()
-            TOKSTRING = ' '.join(tokens)
-            for a in sorted([(y[3],x) for x in allmatches for y in allmatches[x]],key=lambda z: len(z[0]),reverse=True):
-                pass
-                if a[0] in TOKSTRING:
-                    TOKSTRING = TOKSTRING.replace(a[0],'')
-                    tosave.append(a[1])
-            allmatches = {x:allmatches[x] for x in allmatches if x in tosave}
-            
-            ## Reformat objects returned
-            tokens = ' '.join(tokens)
-            c = 0
+    if matches == 'exact':
+        allmatches = {x : [y for y in allmatches[x] if y[0] <= 2] for x in allmatches if allmatches[x] != []}
+    elif matches == 'best':
+        allmatches = {x : [y for y in allmatches[x] if y[0] == min([z[0] for z in allmatches[x]])] for x in allmatches if allmatches[x] != []}
+
+        # Consistency checks: make sure that text in string aren't being 
+        # "tagged" with more than one person's name from namedict
+        toremove = set()
+        for a in allmatches:
+            for a1 in allmatches:
+                if len(a) < len(a1) and a in a1:
+                    if allmatches[a] == allmatches[a1]:
+                        toremove.add(a1)
+        for r in toremove: del allmatches[r]
+
+        tosave = list()
+        TOKSTRING = ' '.join(tokens)
+        for a in sorted([(y[3],x) for x in allmatches for y in allmatches[x]],key=lambda z: len(z[0]),reverse=True):
+            pass
+            if a[0] in TOKSTRING:
+                TOKSTRING = TOKSTRING.replace(a[0],'')
+                tosave.append(a[1])
+        allmatches = {x:allmatches[x] for x in allmatches if x in tosave}
+        
+        ## Reformat objects returned
+        tokens = ' '.join(tokens)
+        c = 0
+        if allmatches != {}:
             for a in sorted([(y[3],x) for x in allmatches for y in allmatches[x]],key=lambda z: len(z[0]),reverse=True):
                 c += 1
                 tokens = tokens.replace(a[0],'['+str(c)+']')
